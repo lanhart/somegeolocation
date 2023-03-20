@@ -53,7 +53,7 @@ const pages = [
                     // create a new view centered on the user's location
                     let view = new ol.View({
                       center: userLocation,
-                      zoom: 10
+                      zoom: 20
                     });
                   
                     // set the view as the map's current view
@@ -64,7 +64,7 @@ const pages = [
                     alert('Error getting user position');
                     console.log(error);
                 };
-                navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+                navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
                 /*var marker_el = document.getElementById('marker');
                 var marker = new ol.Overlay({
                 position: pos,
