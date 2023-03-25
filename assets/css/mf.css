@@ -107,3 +107,23 @@ li > a > svg {
     border: none;
     background: #ececec;
 }
+
+.showWhereIAM {
+    position: fixed;
+    border: 0px;
+    bottom: 10px;
+    right: 10px;
+    z-index: 10000;
+    padding: 10px;
+    background: #fff;
+    border-radius: 66px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.showWhereIAM > svg {
+    height: 30px;
+    width: 30px;
+    color: #000;
+}

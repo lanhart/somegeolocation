@@ -24,7 +24,7 @@ const pages = [
     },
     {
         "name" : "MapActivity",
-        "html" : `<div class="app-nav"><a class="open-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg></a>TrafficLight</div>
+        "html" : `<div class="app-nav"><a class="showWhereIAM"><svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><path fill="currentColor" d="M272 464a16 16 0 0 1-16-16.42V264.13a8 8 0 0 0-8-8H64.41a16.31 16.31 0 0 1-15.49-10.65a16 16 0 0 1 8.41-19.87l384-176.15a16 16 0 0 1 21.22 21.19l-176 384A16 16 0 0 1 272 464Z"/></svg></a><a class="open-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg></a>TrafficLight</div>
                   <div id="map" class="map"></div>
                   <div class="drawer">
                     <button class="close-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
@@ -88,6 +88,9 @@ const pages = [
                     console.log(error);
                 };
                 navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
+                document.querySelector('.showWhereIAM').addEventListener('click', function(){
+                    navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
+                });
                 /*var marker_el = document.getElementById('marker');
                 var marker = new ol.Overlay({
                 position: pos,
