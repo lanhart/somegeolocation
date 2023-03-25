@@ -133,3 +133,7 @@ function convertTrafficLights(lights){
   }
   return arrayJSON;
 }
+
+function closeBottom(){
+  document.querySelector('.bottomsheet').classList.remove('open');
+}

@@ -39,7 +39,7 @@ const pages = [
                     <div class="header-box">
                         <div class="title">Add TrafficLight</div>
                         <div class="actions">
-                        <button class="close-bottomsheet-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
+                        <button class="close-bottomsheet-btn" onclick="closeBottom();"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
                         </div>
                     </div>
                     <form>
@@ -50,7 +50,7 @@ const pages = [
                         <a class="btn addGreenLightTime">SetGreenTime</a>
                         <a class="btn addRedLightTime">SetRedTime</a>
                     </div>
-                    <button type="button" class="close-bottomsheet-btn">Cancel</button>
+                    <button type="button" class="close-bottomsheet-btn" onclick="closeBottom()">Cancel</button>
                     </form>
                   </div>
                     </div>`,
