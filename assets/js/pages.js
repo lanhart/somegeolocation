@@ -91,7 +91,7 @@ const pages = [
 
                 const updateGeolocationInstantly = function(){
                     if (isCalling){
-                        if (errorCall == true){
+                        if (errorCall == false){
                             navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
                         }
                     }
