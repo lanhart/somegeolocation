@@ -85,12 +85,29 @@ const pages = [
 
                 const errorCallback = (error) => {
                     alert('Error getting user position');
+                    errorCall = true;
                     console.log(error);
                 };
+
+                const updateGeolocationInstantly = function(){
+                    if (isCalling){
+                        if (errorCall == true){
+                            navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
+                        }
+                    }
+                }
+
                 navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
                 document.querySelector('.showWhereIAM').addEventListener('click', function(){
-                    navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
+                    if (isCalling = false){
+                        isCalling = true;
+                    }else{
+                        isCalling = false;
+                    }
                 });
+
+                setInterval(updateGeolocationInstantly, 1000);
+
                 /*var marker_el = document.getElementById('marker');
                 var marker = new ol.Overlay({
                 position: pos,
