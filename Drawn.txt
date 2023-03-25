@@ -1,0 +1,182 @@
+К сожалению, я не могу написать полный код фреймворка CSS и JS для TrafficLight, поскольку требования к дизайну и функциональности интерфейса могут быть уникальными для каждого приложения. Однако я могу дать общую структуру, которую можно использовать для создания таких элементов интерфейса:
+
+CSS
+css
+Copy code
+
+JS
+javascript
+Copy code
+// Bottomsheet
+const bottomsheet = document.querySelector('.bottomsheet');
+const openBottomsheetBtn = document.querySelector('.open-bottomsheet-btn');
+const closeBottomsheetBtn = document.querySelector('.close-bottomsheet-btn');
+
+openBottomsheetBtn.addEventListener('click', function() {
+  bottomsheet.classList.add('open');
+});
+closeBottomsheetBtn.addEventListener('click', function() {
+  bottomsheet.classList.remove('open');
+});
+
+// Navbar
+const navbar = document.querySelector('.navbar');
+const openDrawerBtn = document.querySelector('.open-drawer-btn');
+
+openDrawerBtn.addEventListener('click', function() {
+  navbar.classList.toggle('open');
+});
+
+// Drawer
+const drawer = document.querySelector('.drawer');
+const closeDrawerBtn = document.querySelector('.close-drawer-btn');
+const overlay = document.querySelector('.overlay');
+
+openDrawerBtn.addEventListener('click', function() {
+  drawer.classList.add('open');
+  overlay.classList.add('open');
+});
+closeDrawerBtn.addEventListener('click', function() {
+drawer.classList.remove('open');
+overlay.classList.remove('open');
+});
+overlay.addEventListener('click', function() {
+drawer.classList.remove('open');
+overlay.classList.remove('open');
+});
+
+Copy code
+
+Это лишь общий пример того, как реализовать такие элементы интерфейса, и конечный код может отличаться в зависимости от требований к дизайну и функциональности. Надеюсь, это поможет Вам начать создание фреймворка CSS и JS для TrafficLight!
+
+
+
+Cajemam Carente
+Напиши пример использования этих элементов на html для создания меток на карте. Вместо карты используй какую-то заглушку
+
+2 / 2
+
+Конечно! Вот пример использования элементов интерфейса из предыдущего ответа для создания меток на карте на HTML:
+
+html
+Copy code
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Map Markers</title>
+  <style>
+    /* Стили для заглушки */
+    body {
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    .map {
+      width: 100%;
+      height: 400px;
+      background-color: #ddd;
+      position: relative;
+    }
+    .marker {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 24px;
+      background-color: #fff;
+      border: 2px solid #333;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Верхняя панель навигации -->
+  <div class="navbar">
+    <div class="logo">TrafficLight</div>
+    <div class="menu">
+      <a href="#" class="menu-item">Map</a>
+      <a href="#" class="menu-item">Markers</a>
+      <a href="#" class="menu-item">Settings</a>
+    </div>
+    <button class="open-drawer-btn">Menu</button>
+  </div>
+
+  <!-- Выдвижная панель -->
+  <div class="drawer">
+    <button class="close-drawer-btn">Close</button>
+    <ul>
+      <li><a href="#">Map</a></li>
+      <li><a href="#">Markers</a></li>
+      <li><a href="#">Settings</a></li>
+    </ul>
+  </div>
+
+  <!-- Оверлей -->
+  <div class="overlay"></div>
+
+  <!-- Кнопка для открытия bottomsheet -->
+  <button class="open-bottomsheet-btn">Add Marker</button>
+
+  <!-- Bottomsheet для добавления меток -->
+  <div class="bottomsheet">
+    <form>
+      <label for="marker-name">Name:</label>
+      <input type="text" id="marker-name">
+      <br>
+      <label for="marker-description">Description:</label>
+      <textarea id="marker-description"></textarea>
+      <br>
+      <button type="submit">Add</button>
+      <button type="button" class="close-bottomsheet-btn">Cancel</button>
+    </form>
+  </div>
+
+  <!-- Заглушка для карты и меток -->
+  <div class="map">
+    <div class="marker"></div>
+    <div class="marker"></div>
+    <div class="marker"></div>
+  </div>
+
+  <!-- Скрипт для открытия и закрытия выдвижной панели и bottomsheet -->
+  <script>
+    const openDrawerBtn = document.querySelector('.open-drawer-btn');
+    const closeDrawerBtn = document.querySelector('.close-drawer-btn');
+    const drawer = document.querySelector('.drawer');
+    const overlay = document.querySelector('.overlay');
+
+    openDrawerBtn.addEventListener('click', function() {
+      drawer.classList.add('open');
+      overlay.classList.add('open');
+    });
+    closeDrawerBtn.addEventListener('click', function() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+    overlay.addEventListener('click', function() {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+
+    const openBottomsheetBtn = document.querySelector('.open-bottomsheet-btn');
+    const closeBottomsheetBtn = document.querySelector('.close-bottomsheet-btn');
+    const bottomsheet = document.querySelector('.bottomsheet');
+
+    openBottomsheetBtn.addEventListener('click', function() {
+      bottomsheet.classList.add('open');
+    });
+    closeBottomsheetBtn.addEventListener('click', function() {
+      bottomsheet.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
+Этот HTML-код использует элементы интерфейса, которые были определены в предыдущем ответе, для создания меток на карте на заглушке. В этом примере создана простая карта с тремя метками, которые представлены круглыми элементами с белым фоном и черной обводкой. Также добавлены элементы интерфейса для навигации, выдвижной панели и bottomsheet.
+
+Когда пользователь нажимает на кнопку "Add Marker", открывается bottomsheet с формой для добавления меток. Когда пользователь заполняет форму и нажимает кнопку "Add", метка добавляется на карту. Выдвижная панель и bottomsheet могут быть закрыты по нажатию на кнопки "Close" или клику на оверлей.
+
+Этот пример использует заглушку вместо карты, поэтому необходимо заменить ее на фа
+
+

@@ -12,24 +12,47 @@ const pages = [
         }`,
     },
     {
+        "name" : "DeleteActivity",
+        "html" : `<div class="app-logo">TrafficLight</div>
+                  <div class="app-action">
+                    <a class="app-action btn btn-start-using">Continue using the app</a>
+                  </div>
+                  </div>`,
+        "js" : `document.querySelector('.btn-start-using').onclick = function(){
+            app.renderView('MapActivity');
+        }`,
+    },
+    {
         "name" : "MapActivity",
-        "html" : `<div class="app-nav">TrafficLight</div>
+        "html" : `<div class="app-nav"><a class="open-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg></a>TrafficLight</div>
                   <div id="map" class="map"></div>
-                  <div class="hidden bottom-sheet frame">
+                  <div class="drawer">
+                    <button class="close-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
+                    <ul>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21 10.12h-6.78l2.74-2.82c-2.73-2.7-7.15-2.8-9.88-.1a6.887 6.887 0 0 0 0 9.8c2.73 2.7 7.15 2.7 9.88 0c1.36-1.35 2.04-2.92 2.04-4.9h2c0 1.98-.88 4.55-2.64 6.29c-3.51 3.48-9.21 3.48-12.72 0c-3.5-3.47-3.53-9.11-.02-12.58a8.987 8.987 0 0 1 12.65 0L21 3v7.12M12.5 8v4.25l3.5 2.08l-.72 1.21L11 13V8h1.5Z"/></svg> Update traffic lights</a></li>
+                    <li><a href="#" class="clickDeleteLights"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12Z"/></svg> Delete all traffic lights</a></li>
+                    <li><a href="#" class="clickSaveLights"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16v-6H5l7-7l7 7h-4v6H9m-4 4v-2h14v2H5Z"/></svg> Upload traffic lights</a></li>
+                    </ul>
+                  </div>
+                  <div class="overlay"></div>
+                  <div class="bottomsheet">
                     <div class="header-box">
                         <div class="title">Add TrafficLight</div>
                         <div class="actions">
-                            <a class="closeFrame" onclick="document.querySelector('.frame').classList.add('hidden')">X</a>
+                        <button class="close-bottomsheet-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
                         </div>
                     </div>
-                    <div class="form">
-                        <div class="display-text geo-title"></div>
-                        <div class="display-text greenLightTime"></div>
-                        <div class="display-text redLightTime"></div>
-                        <div class="app-action">
-                            <a class="btn addGreenLightTime">SetGreenTime</a>
-                            <a class="btn addRedLightTime">SetRedTime</a>
-                        </div>
+                    <form>
+                    <div class="display-text geo-title"></div>
+                    <div class="display-text greenLightTime"></div>
+                    <div class="display-text redLightTime"></div>
+                    <div class="app-action">
+                        <a class="btn addGreenLightTime">SetGreenTime</a>
+                        <a class="btn addRedLightTime">SetRedTime</a>
+                    </div>
+                    <button type="button" class="close-bottomsheet-btn">Cancel</button>
+                    </form>
+                  </div>
                     </div>`,
         "js" : `var temporaryLight = new TrafficLight();
                 var markersBox = document.querySelector('.markers');
@@ -117,8 +140,10 @@ const pages = [
                 map.on('click', function(evt){
                 var LongLat = ol.proj.toLonLat(evt.coordinate);
                 coordinates=LongLat;
-                temporaryLight = new TrafficLight(evt.coordinate[0], evt.coordinate[1]);
-                document.querySelector('.frame').classList.remove('hidden');
+                console.log(LongLat)
+                temporaryLight = new TrafficLight(coordinates[0], coordinates[1]);
+                temporaryLight.cords = coordinates;
+                document.querySelector('.bottomsheet').classList.add('open');
                 document.querySelector('.geo-title').innerText = 'Position: ' + String(evt.coordinate[0]) + ' , ' + String(evt.coordinate[1]);
                 document.querySelector('.geo-title').setAttribute('latlong', String(evt.coordinate[0]) + ';' + String(evt.coordinate[1]));
                 /*marker.setPosition(evt.coordinate);
@@ -130,13 +155,6 @@ const pages = [
                 }
                 document.querySelector('.addRedLightTime').onclick = function(){
                     if (temporaryLight.greenStartTime){
-                        let marker = document.createElement('div');
-                        let createNewId = randomId();
-                        marker.classList.add('marker');
-                        marker.id = createNewId;
-                        temporaryLight.elementID = createNewId;
-                        document.body.querySelector('.markers').append(marker);
-                        marker.style = "url('/assets/images/red-light.png') no-repeat top center;";
                         let latlong = document.querySelector('.geo-title').getAttribute('latlong');
                         let poss = coordinates;
                         temporaryLight.markers = new ol.layer.Vector({
@@ -153,10 +171,76 @@ const pages = [
                         temporaryLight.markers.getSource().addFeature(temporaryLight.marker);
                         trafficLights[trafficLights.length] = temporaryLight;
                         temporaryLight.startRed();
-                        document.querySelector('.frame').classList.add('hidden');
+                        bottomsheet.classList.remove('open');
                     }else{
                         alert('Start red light first!');
                     }
-                }`,
+                }
+                const openDrawerBtn = document.querySelector('.open-drawer-btn');
+                const closeDrawerBtn = document.querySelector('.close-drawer-btn');
+                const drawer = document.querySelector('.drawer');
+                const overlay = document.querySelector('.overlay');
+                const clickSaveLights = document.querySelector('.clickSaveLights');
+                const clickDeleteLights = document.querySelector('.clickDeleteLights');
+
+                openDrawerBtn.addEventListener('click', function() {
+                drawer.classList.add('open');
+                overlay.classList.add('open');
+                });
+                closeDrawerBtn.addEventListener('click', function() {
+                drawer.classList.remove('open');
+                overlay.classList.remove('open');
+                });
+                overlay.addEventListener('click', function() {
+                drawer.classList.remove('open');
+                overlay.classList.remove('open');
+                bottomsheet.classList.remove('open');
+                });
+
+                if (localStorage.trafficLights){
+                    console.log(localStorage.trafficLights);
+                    let traffic = JSON.parse(localStorage.trafficLights);
+                    for (let t in traffic){
+                        let traf = traffic[t];
+                        console.log(traf);
+                        let poss = (traf.cords);
+                        temporaryLight = new TrafficLight(traf.cords[0],traf.cords[1]);
+                        temporaryLight.startGreen();
+                        temporaryLight.startRed();
+                        temporaryLight.greenStartTime = traf.greenStartTime;
+                        temporaryLight.redStartTime = traf.redStartTime;
+                        temporaryLight.markers = new ol.layer.Vector({
+                            source: new ol.source.Vector(),
+                            style: new ol.style.Style({
+                              image: new ol.style.Icon({
+                                anchor: [0.5, 1],
+                                src: '/assets/images/red-light.png'
+                              })
+                            })
+                        });
+                        map.addLayer(temporaryLight.markers);
+                        temporaryLight.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(poss)));
+                        temporaryLight.markers.getSource().addFeature(temporaryLight.marker);
+                        trafficLights[trafficLights.length] = temporaryLight;
+                    }
+                }
+
+                const closeBottomsheetBtn = document.querySelector('.close-bottomsheet-btn');
+                const bottomsheet = document.querySelector('.bottomsheet');
+
+                closeBottomsheetBtn.addEventListener('click', function() {
+                    bottomsheet.classList.remove('open');
+                });
+                
+                clickSaveLights.addEventListener('click', function(){
+                    let tr = convertTrafficLights(trafficLights);
+                    localStorage.trafficLights = JSON.stringify(tr);
+                });
+                
+                clickDeleteLights.addEventListener('click', function(){
+                    localStorage.trafficLights = '';
+                    app.renderView('DeleteActivity');
+                });
+                `,
     }
 ]

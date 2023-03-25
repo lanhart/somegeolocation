@@ -14,6 +14,7 @@ class TrafficLight {
     this.marker = null;
     this.markers = null;
     this.vectorLayer = null;
+    this.cords = [];
   }
 
   updateLight(color) {
@@ -108,4 +109,27 @@ class TrafficLight {
     }, 1000);
     return this.redStartTime;
   }
+}
+
+function convertTrafficClass(classObject){
+  let jsonObject = {
+      lattitude: classObject.lattitude,
+      longtitude: classObject.longtitude,
+      isGreenLight: classObject.isGreenLight,
+      nextIntervals: classObject.nextIntervals,
+      greenStartTime: classObject.greenStartTime,
+      redStartTime: classObject.redStartTime,
+      elementID: classObject.elementID,
+      cords: classObject.cords,
+  };
+  return jsonObject;
+}
+
+function convertTrafficLights(lights){
+  let arrayJSON = [];
+  for (let l in lights){
+    let light = lights[l];
+    arrayJSON[arrayJSON.length] = convertTrafficClass(light);
+  }
+  return arrayJSON;
 }
