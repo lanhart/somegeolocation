@@ -104,6 +104,7 @@ const pages = [
                     }else{
                         isCalling = false;
                     }
+                    navigator.geolocation.getCurrentPosition(successCallback, errorCallback ,{ enableHighAccuracy: true });
                 });
 
                 setInterval(updateGeolocationInstantly, 1000);
