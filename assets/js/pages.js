@@ -182,6 +182,7 @@ const pages = [
                 /*marker.setPosition(evt.coordinate);
                 marker.set('dragging', false);*/
                 });
+                /*
                 document.querySelector('.addGreenLightTime').onclick = function(){
                     let toGreen = temporaryLight.startGreen();
                     document.querySelector('.geo-title').innerText = 'Green time: '+toGreen.toLocaleDateString(undefined, options);
@@ -209,6 +210,7 @@ const pages = [
                         alert('Start red light first!');
                     }
                 }
+                */
                 const openDrawerBtn = document.querySelector('.open-drawer-btn');
                 const closeDrawerBtn = document.querySelector('.close-drawer-btn');
                 const drawer = document.querySelector('.drawer');
