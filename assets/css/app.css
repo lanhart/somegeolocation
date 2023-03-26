@@ -58,7 +58,7 @@ main.app {
   align-items: center;
 }
 
-#map {
+#maps {
   flex-grow: 1;
   max-height: calc(100% - 60px);
 }

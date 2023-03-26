@@ -25,7 +25,7 @@ const pages = [
     {
         "name" : "MapActivity",
         "html" : `<div class="app-nav"><a class="showWhereIAM"><svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><path fill="currentColor" d="M272 464a16 16 0 0 1-16-16.42V264.13a8 8 0 0 0-8-8H64.41a16.31 16.31 0 0 1-15.49-10.65a16 16 0 0 1 8.41-19.87l384-176.15a16 16 0 0 1 21.22 21.19l-176 384A16 16 0 0 1 272 464Z"/></svg></a><a class="open-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"></path></svg></a>TrafficLight</div>
-                  <div id="map" class="map"></div>
+                  <div id="maps" class="map"></div>
                   <div class="drawer">
                     <button class="close-drawer-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"/></svg></button>
                     <ul>
@@ -36,6 +36,11 @@ const pages = [
                   </div>
                   <div class="overlay"></div>
                   <div class="bottomsheet">
+                    
+                  </div>
+                  <div class="display-text geo-title" style="display: none;"></div>
+                    </div>
+                    <!--
                     <div class="header-box">
                         <div class="title">Add TrafficLight</div>
                         <div class="actions">
@@ -52,8 +57,7 @@ const pages = [
                     </div>
                     <button type="button" class="close-bottomsheet-btn" onclick="closeBottom()">Cancel</button>
                     </form>
-                  </div>
-                    </div>`,
+                    -->`,
         "js" : `var temporaryLight = new TrafficLight();
                 var markersBox = document.querySelector('.markers');
                 // basic config map
@@ -61,9 +65,9 @@ const pages = [
                 var layer = new ol.layer.Tile({
                 source: new ol.source.OSM()
                 });
-                var map = new ol.Map({
+                map = new ol.Map({
                 layers: [layer],
-                target: 'map',
+                target: 'maps',
                 view: new ol.View({
                     center: pos,
                     zoom: 4
@@ -155,6 +159,7 @@ const pages = [
                 }
                 });
                 */
+
                 var markerSwitchId=false;
                 const options = { year: "numeric", month: "long", day: "numeric" };
                 // onclick ma
@@ -164,6 +169,13 @@ const pages = [
                 console.log(LongLat)
                 temporaryLight = new TrafficLight(coordinates[0], coordinates[1]);
                 temporaryLight.cords = coordinates;
+                document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Which light is now?</div>' +
+                                                                   '<div class="bottomSheetImages">' +
+                                                                   '    <img src="/assets/images/red-light-btn.svg" onclick="chooseGreenLight()"/>' +
+                                                                   '    <img src="/assets/images/green-light-btn.svg" onclick="chooseRedLight()"/>' +
+                                                                   '</div>';
                 document.querySelector('.bottomsheet').classList.add('open');
                 document.querySelector('.geo-title').innerText = 'Position: ' + String(evt.coordinate[0]) + ' , ' + String(evt.coordinate[1]);
                 document.querySelector('.geo-title').setAttribute('latlong', String(evt.coordinate[0]) + ';' + String(evt.coordinate[1]));
@@ -230,6 +242,8 @@ const pages = [
                         temporaryLight.startRed();
                         temporaryLight.greenStartTime = traf.greenStartTime;
                         temporaryLight.redStartTime = traf.redStartTime;
+                        temporaryLight.secondRedStartTime = traf.secondRedStartTime;
+                        temporaryLight.secondGreenStartTime = traf.secondGreenStartTime;
                         temporaryLight.markers = new ol.layer.Vector({
                             source: new ol.source.Vector(),
                             style: new ol.style.Style({
@@ -265,3 +279,130 @@ const pages = [
                 `,
     }
 ]
+
+
+const redLightStep3 = function(){
+    temporaryLight.startSecondRed();
+    let latlong = document.querySelector('.geo-title').getAttribute('latlong');
+    let poss = coordinates;
+    temporaryLight.markers = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            src: '/assets/images/red-light.png'
+          })
+        })
+    });
+    map.addLayer(temporaryLight.markers);
+    temporaryLight.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(poss)));
+    temporaryLight.markers.getSource().addFeature(temporaryLight.marker);
+    trafficLights[trafficLights.length] = temporaryLight;
+    document.querySelector('.bottomsheet').classList.remove('open');
+}
+
+const redLightStep2 = function(){
+    temporaryLight.startGreen();
+    document.querySelector('.bottomsheet').classList.remove('open');
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Step 3/3</div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Press red light started, when the traffic light becomes red</div>' +
+                                                                   '<a class="bottomSheetButton" style="background: #FF5F5F;" onclick="redLightStep3()">Red light started</a>' +
+                                                                   '<a class="bottomSheetButton" style="background: #000000;" onclick="makeInitialLights()">Start from beginning</a>';
+    document.querySelector('.bottomsheet').classList.add('open');
+}
+
+const redLightStep = function(){
+    temporaryLight.startRed();
+    document.querySelector('.bottomsheet').classList.remove('open');
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Step 2/3</div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Press green light started, when the traffic light becomes green</div>' +
+                                                                   '<a class="bottomSheetButton" style="background: #00BD00;" onclick="redLightStep2()">Green light started</a>' +
+                                                                   '<a class="bottomSheetButton" style="background: #000000;" onclick="makeInitialLights()">Start from beginning</a>';
+    document.querySelector('.bottomsheet').classList.add('open');
+}
+
+const chooseRedLight = function(){
+    temporaryLight = new TrafficLight(coordinates[0], coordinates[1]);
+    temporaryLight.cords = coordinates;
+    document.querySelector('.bottomsheet').classList.remove('open');
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Step 1/3</div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Press red light started, when the traffic light becomes red</div>' +
+                                                                   '<a class="bottomSheetButton" style="background: #FF5F5F;" onclick="redLightStep()">Red light started</a>' +
+                                                                   '<a class="bottomSheetButton" style="background: #000000;" onclick="makeInitialLights()">Start from beginning</a>';
+    document.querySelector('.bottomsheet').classList.add('open');
+}
+
+const makeInitialLights = function(){
+    temporaryLight = new TrafficLight(coordinates[0], coordinates[1]);
+    temporaryLight.cords = coordinates;
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                       '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                       '<div class="bottomSheetText">Which light is now?</div>' +
+                                                       '<div class="bottomSheetImages">' +
+                                                       '    <img src="/assets/images/red-light-btn.svg" onclick="chooseGreenLight()"/>' +
+                                                       '    <img src="/assets/images/green-light-btn.svg" onclick="chooseRedLight()"/>' +
+                                                       '</div>';
+}
+
+const chooseGreenLight = function(){
+    temporaryLight = new TrafficLight(coordinates[0], coordinates[1]);
+    temporaryLight.cords = coordinates;
+    document.querySelector('.bottomsheet').classList.remove('open');
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Step 1/3</div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Press green light started, when the traffic light becomes green</div>' +
+                                                                   '<a class="bottomSheetButton" style="background: #00BD00;" onclick="greenLightStep()">Green light started</a>' +
+                                                                   '<a class="bottomSheetButton" style="background: #000000;" onclick="makeInitialLights()">Start from beginning</a>';
+    document.querySelector('.bottomsheet').classList.add('open');
+}
+
+const greenLightStep = function(){
+    temporaryLight.startGreen();
+    document.querySelector('.bottomsheet').classList.remove('open');
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Step 2/3</div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Press red light started, when the traffic light becomes red</div>' +
+                                                                   '<a class="bottomSheetButton" style="background: #FF5F5F;" onclick="greenLightStep2()">Red light started</a>' +
+                                                                   '<a class="bottomSheetButton" style="background: #000000;" onclick="makeInitialLights()">Start from beginning</a>';
+    document.querySelector('.bottomsheet').classList.add('open');
+}
+
+const greenLightStep2 = function(){
+    temporaryLight.startRed();
+    document.querySelector('.bottomsheet').classList.remove('open');
+    document.querySelector('.bottomsheet').innerHTML = '<div class="mgff_close" onclick="closeBottom()"></div>' +
+                                                                   '<div class="bottomSheetTitle">Step 3/3</div>' +
+                                                                   '<div class="bottomSheetTitle">Create new traffic light</div>' +
+                                                                   '<div class="bottomSheetText">Press green light started, when the traffic light becomes green</div>' +
+                                                                   '<a class="bottomSheetButton" style="background: #00BD00;" onclick="greenLightStep3()">Green light started</a>' +
+                                                                   '<a class="bottomSheetButton" style="background: #000000;" onclick="makeInitialLights()">Start from beginning</a>';
+    document.querySelector('.bottomsheet').classList.add('open');
+}
+
+const greenLightStep3 = function(){
+    temporaryLight.startSecondGreen();
+    let latlong = document.querySelector('.geo-title').getAttribute('latlong');
+    let poss = coordinates;
+    temporaryLight.markers = new ol.layer.Vector({
+        source: new ol.source.Vector(),
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            src: '/assets/images/green-light.png'
+          })
+        })
+    });
+    map.addLayer(temporaryLight.markers);
+    temporaryLight.marker = new ol.Feature(new ol.geom.Point(ol.proj.fromLonLat(poss)));
+    temporaryLight.markers.getSource().addFeature(temporaryLight.marker);
+    trafficLights[trafficLights.length] = temporaryLight;
+    document.querySelector('.bottomsheet').classList.remove('open');
+}

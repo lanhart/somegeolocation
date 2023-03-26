@@ -10,6 +10,8 @@ class TrafficLight {
     this.nextIntervals = [];
     this.greenStartTime = null;
     this.redStartTime = null;
+    this.secondGreenStartTime = null;
+    this.secondRedStartTime = null;
     this.elementID = null;
     this.marker = null;
     this.markers = null;
@@ -18,43 +20,18 @@ class TrafficLight {
   }
 
   updateLight(color) {
-    switch (color) {
-      case 'red':
-        try{
-          let newStyle = new ol.style.Style({
-            image: new ol.style.Icon({
-              anchor: [0.5, 1],
-              src: '/assets/images/red-light.png'
-            })
-          });
-          this.marker.setStyle(newStyle);
-        }catch (e){console.log(e)}
-        break;
-      case 'yellow':
-        try{
-          let newStyle = new ol.style.Style({
-            image: new ol.style.Icon({
-              anchor: [0.5, 1],
-              src: '/assets/images/yellow-light.png'
-            })
-          });
-          this.marker.setStyle(newStyle);
-        }catch (e){console.log(e)}
-        break;
-      case 'green':
-        try{
-          let newStyle = new ol.style.Style({
-            image: new ol.style.Icon({
-              anchor: [0.5, 1],
-              src: '/assets/images/green-light.png'
-            })
-          });
-          this.marker.setStyle(newStyle);
-        }catch (e){console.log(e)}
-        break;
-    }
+      try{
+        let newStyle = new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            src: `/assets/images/${color}-light.png`
+          })
+        });
+        this.marker.setStyle(newStyle);
+      }catch (e){console.log(e)}
   }
 
+  /*
   calculateTimeLeft(startTime, colorTime) {
     const now = Date.now();
     const elapsedTime = Math.floor((now - startTime) / 1000); // in seconds
@@ -89,6 +66,65 @@ class TrafficLight {
       }
     }
   }
+  */
+
+  calculateTimeLeft(startTime, colorTime) {
+    const now = Date.now();
+    const elapsedTime = Math.floor((now - startTime) / 1000); // in seconds
+    const timeLeft = colorTime - elapsedTime;
+    return timeLeft;
+  }
+
+  setColor() {
+    const now = Date.now();
+    if (this.isGreenLight) {
+      const timeLeft = this.calculateTimeLeft(this.greenStartTime, GREEN_TIME);
+      if (timeLeft <= 0) {
+        this.isGreenLight = false;
+        this.updateLight('yellow');
+        setTimeout(() => {
+          this.startRed();
+        }, 2000);
+      } else {
+        this.updateLight('green');
+      }
+    } else {
+      let timeLeft = this.calculateTimeLeft(this.redStartTime, RED_TIME);
+      if (timeLeft <= 0) {
+        this.isGreenLight = true;
+        this.greenStartTime = Date.now();
+        this.updateLight('green');
+        timeLeft = GREEN_TIME;
+        if (this.secondGreenStartTime !== null) {
+          const secondTimeLeft = this.calculateTimeLeft(this.secondGreenStartTime, GREEN_TIME);
+          if (secondTimeLeft > 0 && secondTimeLeft < timeLeft) {
+            this.isGreenLight = false;
+            this.secondGreen();
+            return;
+          }
+        }
+        let nextIntervals = [];
+        if (this.secondRedStartTime !== null) {
+          const timeSinceLastRed = Math.floor((this.greenStartTime - this.secondRedStartTime) / 1000);
+          if (timeSinceLastRed <= GREEN_TIME) {
+            const timeLeft = GREEN_TIME - timeSinceLastRed;
+            nextIntervals.push(timeLeft);
+          }
+        }
+        this.greenStartTime = Date.now();
+        this.isGreenLight = true;
+        this.setColor();
+        setInterval(() => {
+          this.setColor();
+        }, 1000);
+        return this.greenStartTime;
+      } else if (timeLeft <= 5) {
+        this.updateLight('yellow');
+      } else {
+        this.updateLight('red');
+      }
+    }
+  }
 
   startGreen() {
     this.isGreenLight = true;
@@ -109,6 +145,22 @@ class TrafficLight {
     }, 1000);
     return this.redStartTime;
   }
+
+  secondGreen() {
+    this.isGreenLight = true;
+    this.greenStartTime = this.secondGreenStartTime;
+    this.secondGreenStartTime = null;
+    this.updateLight('green');
+  }
+
+  startSecondGreen() {
+    this.secondGreenStartTime = Date.now();
+    this.setColor();
+  }
+
+  startSecondRed() {
+    this.secondRedStartTime = Date.now();
+  }
 }
 
 function convertTrafficClass(classObject){
@@ -121,6 +173,8 @@ function convertTrafficClass(classObject){
       redStartTime: classObject.redStartTime,
       elementID: classObject.elementID,
       cords: classObject.cords,
+      secondGreenStartTime : classObject.secondGreenStartTime,
+      secondRedStartTime: classObject.secondRedStartTime,
   };
   return jsonObject;
 }

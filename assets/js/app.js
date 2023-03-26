@@ -1,4 +1,5 @@
 var coordinates=[];
+var map;
 var trafficLights = [];
 var errorCall = false;
 var isCalling = false;
